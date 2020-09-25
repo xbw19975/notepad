@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>apiPost</title>
+    <script src="js/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof module === 'object') {
+            window.jQuery = window.$ = module.exports;
+        };
+    </script>
+    <script src="js/mousetrap.min.js"></script>
+    <script src="node_modules/art-template/lib/template-web.js"></script>
+    <script src="node_modules/mockjs/dist/mock-min.js"></script>
+    <script src="node_modules/sortablejs/dist/sortable.min.js"></script>
+
+</head>
+
+<link rel="stylesheet" href="css/index.css">
+
+<body>
+    <h1>在线HTTP POST/GET接口测试工具</h1>
+    <div class="sidebar">
+        <ul class="catalog">
+            <li><i>目录</i></li>
+            <li><i>post 1</i></li>
+            <li><i>get 2</i></li>
+            <li><i>post 3</i></li>
+            <li class="current"><i>get 4</i></li>
+            <li><i>post 5</i></li>
+            <li><i>get 6</i></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="content_header">
+            <ul class="nowInterface">
+                <li class="current">tree<i>X</i></li>
+                <li>新建接口<i>X</i></li>
+                <div class="newInterface">+</div>
+            </ul>
+            <div>
+                <select name="request" id="requestType" vaule='POST'>
+                    <option value="GET">GET</option>
+                    <option value="POST" selected>POST</option>
+                </select>
+                <input type="text" value="http://47.95.15.38:8000/tree" class="input_1" id='input_1'>
+                <button type="submit" onclick="sendRequest()">发送请求</button>
+                <button type="submit" onclick="saveInterface()">保存</button>
+                <input type="checkbox" onclick="showParams()" id="showParams" checked>请求参数
+                <input type="checkbox" onclick="showSendHeader()" id="showSendHeader" checked>请求Header
+            </div>
+        </div>
+
+        <div class="content_body">
+            <div class="params" id='params'>
+                <ul id='paramsTable'>
+                    <li>参数名称 参数值</li>
+                </ul>
+                <button onclick="addParams()">添加参数</button>
+                <button>批量添加(JSON参数)</button>
+            </div>
+            <div class="sendHeader" id='sendHeader'>
+                <ul id='paramsHeader'>
+                    <li>Header名称 Header值</li>
+                </ul>
+                <button onclick="addHeader()">添加参数</button>
+                <button>Header参数解释？</button>
+            </div>
+            <hr />
+            <ul class='tabList'>
+                <li class="current">
+                    <h6>Header</h6>
+                </li>
+                <li>
+                    <h6>Response Body(返回的是JSON，会自动格式化)</h6>
+                </li>
+                <li>
+                    <h6>成功响应示例及文档</h6>
+                </li>
+            </ul>
+            <div>
+                <div class="header">
+                    <div id="header_editor" class="header_editor current">
+                        请求返回的Header信息。</div>
+                    <div id="response_editor" class="response_editor">
+                        Response Body info</div>
+                    <div style="width: 100%;">
+                        <div class="header_1">
+                            <div>
+                                <h6>响应模板</h6>
+                                <div id="mock_editor" class="mock_editor">
+                                    mock格式数据。</div>
+                            </div>
+                            <div>
+                                <h6>响应数据</h6>
+                                <div id="mockdata_editor" class="mockdata_editor">
+                                    响应数据。</div>
+                            </div>
+                        </div>
+                        <ul id='responseContent'>
+                            <li>
+                                <span>+</span><span>名称</span><span>类型</span><span>生成规则</span><span>初始值</span><span>层级</span>
+                            </li>
+                            <!-- 实际渲染的模板位置 -->
+                            <li>
+                                <ul id="container" class='container'></ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <script type="text/javascript" src="ace/ace.js"></script>
+        <script src="js/index_sortable.js"></script>
+        <script src="js/load-template.js"></script>
+        <script src="js/ajax.js"></script>
+        <script src="js/mainMethod.js"></script>
+        <script src="js/index.js"></script>
+
+        <!-- 模板生成html代码父模板 -->
+        <script type='text' id="tpl_parent">
+            {{each data item}}
+            <li selfId="{{item.id}}" level="{{item.level}}">
+                {{if item.nextLevel}}
+                <span><button class="out">^</button>
+                    <button class="add">+</button>
+                    <button class="delete">删除</button></span>
+                <span id='nameTd' level="{{item.level}}"><input type="text" value='{{item.name}}' v-model='name'></span>
+                <span> <select id='select'>
+                        {{each $imports.types item1}}
+                        {{if item1.toLowerCase() == item.type.toLowerCase()}}
+                        <option selected>{{item1}}</option>
+                        {{else}}
+                        <option>{{item1}}</option>
+                        {{/if}}
+                        {{/each}}
+                    </select></span>
+                {{if item.rule == 1}}
+                <span><input type="text" value='' v-model='rule'></span>
+                {{else}}
+                <span><input type="text" value='{{item.rule}}' v-model='rule'></span>
+                {{/if}}
+                {{if item.value == '[]'}}
+                {{item.value=""}}
+                {{/if}}
+                <span><input type="text" value='{{item.value}}' v-model='value'></span>
+                <span>{{item.level}}</span>
+                <ul class='container'>
+                    {{@$imports.nextHtml}}
+                </ul>
+                {{else}}
+                <span><button class="out">^</button>
+                    <button class="add">+</button>
+                    <button class="delete">删除</button></span>
+                <span id='nameTd' level="{{item.level}}"><input type="text" value='{{item.name}}' v-model='name'></span>
+                <span> <select id='select'>
+                        {{each $imports.types item1}}
+                        {{if item1.toLowerCase() == item.type.toLowerCase()}}
+                        <option selected>{{item1}}</option>
+                        {{else}}
+                        <option>{{item1}}</option>
+                        {{/if}}
+                        {{/each}}
+                    </select></span>
+                <span><input type="text" value='{{item.rule}}' v-model='rule'></td></span>
+                {{if item.value == '[]'}}
+                {{item.value=""}}
+                {{/if}}
+                <span><input type="text" value='{{item.value}}' v-model='value'></span>
+                <span>{{item.level}}</span>
+                {{/if}}
+            </li>
+            {{/each}}
+        </script>
+        <!-- 模板生成html代码子模板 -->
+        <!-- <script type='text/html' id="tpl">
+                {{if nextlevel}}
+                <li>
+                    <ul id='row' level="{{level}}" dataType="{{type}}">
+                        {{include tpl }}
+                    </ul>
+                </li>
+                {{else}}
+                <li><span><button class="out">^</button>
+                        <button class="add">+</button>
+                        <button class="delete">删除</button></span>
+                    <span id='nameTd' level="{{level}}"><input type="text" value='{{name}}' v-model='name'></span>
+                    <span> <select id='select'>
+                            {{each $imports.types item1}}
+                            {{if item1.toLowerCase() == $value.type.toLowerCase()}}
+                            <option selected>{{item1}}</option>
+                            {{else}}
+                            <option>{{item1}}</option>
+                            {{/if}}
+                            {{/each}}
+                        </select></span>
+                    <span><input type="text" value='{{$value.rule}}' v-model='rule'></td></span>
+                    {{if value == '[]'}}
+                    {{$value.value=""}}
+                    {{/if}}
+                    <span><input type="text" value='{{$value.value}}' v-model='value'></span>
+                    <span>{{$value.level}}</span></li>
+                {{/if}}
+            </script> -->
+        <script src="js/mainMethod.js"></script>
+</body>
+
+</html>
