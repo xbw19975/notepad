@@ -2,7 +2,7 @@
 
 function sortable() {
     this.listSortTable = function () {
-        var nestedSortables = [].slice.call(document.querySelectorAll('.container'));
+        let nestedSortables = [].slice.call(document.querySelectorAll('.container'));
         for (var i = 0; i < nestedSortables.length; i++) {
             new Sortable(nestedSortables[i], {
                 group: 'nested',
@@ -24,6 +24,12 @@ function sortable() {
                 }
             });
         }
+    }
+    this.nowInterfaceTab = function () {
+        new Sortable(nowInterface, {
+            animation: 150,
+            ghostClass: 'blue-background-class'
+        });
     }
 }
 

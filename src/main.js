@@ -25,7 +25,7 @@ const createWindow = () => {
   // and load the index.html of the app. 为你的应用加载index.html
   mainWindow.loadURL(`file://${__dirname}/index.html`);
   // Open the DevTools. 打开开发者工具
-   //mainWindow.webContents.openDevTools();
+   mainWindow.webContents.openDevTools();
  
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {

@@ -36,9 +36,7 @@
 
     <div class="content">
         <div class="content_header">
-            <ul class="nowInterface">
-                <li class="current">tree<i>X</i></li>
-                <li>新建接口<i>X</i></li>
+            <ul class="nowInterface" id="nowInterface">
                 <div class="newInterface">+</div>
             </ul>
             <div>
@@ -46,7 +44,7 @@
                     <option value="GET">GET</option>
                     <option value="POST" selected>POST</option>
                 </select>
-                <input type="text" value="http://47.95.15.38:8000/tree" class="input_1" id='input_1'>
+                <input type="text" value="http://47.95.15.38:8000/tree" class="input_url" id='input_url'>
                 <button type="submit" onclick="sendRequest()">发送请求</button>
                 <button type="submit" onclick="saveInterface()">保存</button>
                 <input type="checkbox" onclick="showParams()" id="showParams" checked>请求参数
