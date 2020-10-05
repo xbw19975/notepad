@@ -85,19 +85,25 @@
       BrowserWindow.toggleDevTools();
       return false;
     })
+    $(".interfaceName").on("input","input",function(){
+      $(".nowInterface li.current").html($(this).val()+"<i>X</i></li>");
+    })
     $(".newInterface").on("click", function () {
       let id = mainMethod.ulid();
-      $(this).before(`<li data_id='${id}'>新建接口<i>X</i></li>`);
+      $(".nowInterface").append(`<li data_id='${id}' class="swiper-slide">新建接口<i>X</i></li>`);
       $(`.nowInterface li[data_id=${id}]`).addClass("current").siblings().removeClass("current")
       mainMethod.defaultPage();
     });
     let sortable1 = new sortable();
     sortable1.nowInterfaceTab();
+    //加载目录
+    mainMethod.store.iterate(function (value, key, iterationNumber) {
+      if (key) {
+        $(".catalog").append(`<li data_id='${value.target_id}'>${value.name}</li>`);
+      }
+    })
   }
   init1();
-
-
-
   //数据存储 electron-store相关
   // const Store = require('electron-store');
   // const store=new Store();

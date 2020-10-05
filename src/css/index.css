@@ -24,7 +24,10 @@ li {
 .input_url {
   width: 500px;
 }
-
+.interfaceName input{
+  height: 24px;
+  width: 400px;
+}
 .header {
   display: flex;
   flex-wrap: wrap;
@@ -146,10 +149,11 @@ li {
 }
 .nowInterface{
   display: flex;
-  padding-top: 40px;
+  max-width: 700px;
+  overflow: hidden;
 }
 .nowInterface li{
-  width: 10%;
+  width: 85px;
   text-align: center;
   position: relative;
   border: 1px solid pink;

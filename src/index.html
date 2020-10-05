@@ -17,28 +17,31 @@
     <script src="node_modules/sortablejs/dist/sortable.min.js"></script>
 
 </head>
-
+<link rel="stylesheet" href="node_modules/swiper/swiper-bundle.min.css">
 <link rel="stylesheet" href="css/index.css">
+<script src="node_modules/swiper/swiper-bundle.min.js"></script>
 
 <body>
     <h1>在线HTTP POST/GET接口测试工具</h1>
     <div class="sidebar">
         <ul class="catalog">
-            <li><i>目录</i></li>
-            <li><i>post 1</i></li>
-            <li><i>get 2</i></li>
-            <li><i>post 3</i></li>
-            <li class="current"><i>get 4</i></li>
-            <li><i>post 5</i></li>
-            <li><i>get 6</i></li>
         </ul>
     </div>
 
     <div class="content">
         <div class="content_header">
-            <ul class="nowInterface" id="nowInterface">
+            <div style="display:flex;margin-top: 23px;height: 3vh;">
+                <!--如果你需要分页-->
+                <!-- <div class="swiper-pagination"></div> -->
+                <!-- 如果需要导航按钮 -->
+                 <div class="swiper-button-prev"></div> 
+                <ul class="nowInterface" id="nowInterface">
+                </ul>
+                <div class="swiper-button-next"></div>
                 <div class="newInterface">+</div>
-            </ul>
+            </div>
+
+            <div class="interfaceName"><input type="text"></div>
             <div>
                 <select name="request" id="requestType" vaule='POST'>
                     <option value="GET">GET</option>
@@ -51,7 +54,38 @@
                 <input type="checkbox" onclick="showSendHeader()" id="showSendHeader" checked>请求Header
             </div>
         </div>
-
+        <script>
+            var mySwiper = new Swiper('.swiper-container', {
+                observer: true, //修改swiper自己或子元素时，自动初始化swiper 
+                observeParents: true, //修改swiper的父元素时，自动初始化swiper 
+                //direction: 'vertical', // 垂直切换选项
+                //loop: true, // 循环模式选项
+                slidesPerView: 3,
+                // 定义slides的数量多少为一组
+                slidesPerGroup: 3,
+                // 分页
+                // pagination: {
+                //     el: '.swiper-pagination',
+                //     // 设为true, 点击分页器的指示点分页器会控制Swiper切换
+                //     clickable: true,
+                // },
+                // 如果需要前进后退按钮
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            })
+        </script>
+        <style type="text/css">
+            .swiper-container {
+                --swiper-theme-color: #ff6600;
+                /*设置Swiper风格 */
+                --swiper-navigation-color: #FFFFFF;
+                /*单独设置按钮颜色 */
+                --swiper-navigation-size: 12px;
+                /* 设置按钮大小 */
+            }
+        </style>
         <div class="content_body">
             <div class="params" id='params'>
                 <ul id='paramsTable'>

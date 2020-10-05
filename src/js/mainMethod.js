@@ -9,16 +9,35 @@ function MainMethod() {
     this.ulid = function(){
         return ulid();
     };
-    const store = localForage.createInstance({
+    this.store=localForage.createInstance({
         name: "store"
     });
-    const historyStore = localForage.createInstance({
+    this.historyStore = localForage.createInstance({
         name: "historyStore"
     });
     this.tabList = function (tabParent, tabSon, tabBody) {
         $(tabParent).on("click", tabSon, function () {
+            //接口切换
             if (tabParent == ".nowInterface") {
                 that.renderPage($(this).attr("data_id"));
+            }
+            //目录切换
+            if (tabParent == ".catalog") {
+                let id=$(this).attr("data_id");
+                let ifCreat=true;
+                $(".nowInterface li").length  > 0 ? $(".nowInterface li").each((index,value)=>{
+                    if($(value).attr("data_id") == id){
+                        $(value).addClass("current").siblings().removeClass("current");
+                        ifCreat=false;
+                    }
+                }) : "" ;
+                if(ifCreat){
+                    that.store.getItem(id).then(function(value){
+                        $(".nowInterface").append(`<li data_id='${id}' class="swiper-slide>${value.name}<i>X</i></li>`);
+                        $(`.nowInterface li[data_id=${id}]`).addClass("current").siblings().removeClass("current")
+                    })
+                }
+                that.renderPage(id);
             }
             $(this).addClass("current").siblings().removeClass("current");
             if (tabBody)
@@ -63,7 +82,7 @@ function MainMethod() {
             //project_id: "3223",
             //"mark": "developing",
             //"target_type": "api",
-            name: $(".nowInterface .current").text(),
+            name: $(".interfaceName input").val(),
             method: $("#requestType").find("option:selected").text(),
             //"sort": "0",
             //"type_sort": "1",
@@ -93,14 +112,15 @@ function MainMethod() {
         };
         //localforage数据储存
         //主要数据存储
-        store.setItem(id, api).then(function () {
+        that.store.setItem(id, api).then(function () {
             alert("保存成功")
         });
     }
     this.renderPage = function (id) {
-        store.getItem(id).then(
+        that.store.getItem(id).then(
             function (value) {
                 if (value) {
+                    $(".interfaceName input").val(value.name);
                     $(".input_url").val(value.request.url);
                     $("#requestType").val(value.method);
                     header_editor.setValue(value.response.success.header_raw);
@@ -108,6 +128,8 @@ function MainMethod() {
                     if (!$.isEmptyObject(value.response.success.raw)) {
                         loadTemplate(JSON.parse(value.response.success.raw))
                     }
+                    $("#paramsTable").empty();
+                    $("#paramsTable").append("<li>参数名称 参数值</li>");
                     if (value.request.body.parameter.length > 0) {
                         let paramsTable = document.getElementById("paramsTable");
                         value.request.body.parameter.forEach((item, index) => {
@@ -116,7 +138,6 @@ function MainMethod() {
                                 `<input type='text' value=${item.key} onfocus='cls(this)'  style='color:gray;'><input type='text' value=${item.value} onfocus='cls(this)' style='color:gray;'><button>删除参数</button>`;
                             paramsTable.appendChild(li);
                         })
-
                     }
                 } else {
                     that.defaultPage();
@@ -125,6 +146,7 @@ function MainMethod() {
         )
     }
     this.defaultPage = function () {
+        $(".interfaceName input").val("");
         $(".input_url").val("");
         header_editor.setValue('');
         response_editor.setValue('');
