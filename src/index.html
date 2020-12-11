@@ -1,246 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang=zh-CN>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>apiPost</title>
-    <script src="js/jquery.min.js"></script>
-    <script type="text/javascript">
-        if (typeof module === 'object') {
-            window.jQuery = window.$ = module.exports;
-        };
-    </script>
-    <script src="js/mousetrap.min.js"></script>
-    <script src="node_modules/art-template/lib/template-web.js"></script>
-    <script src="node_modules/mockjs/dist/mock-min.js"></script>
-    <script src="node_modules/sortablejs/dist/sortable.min.js"></script>
-
+  <meta charset=utf-8>
+  <meta http-equiv=X-UA-Compatible content="IE=edge">
+  <meta name=viewport content="width=device-width,initial-scale=1">
+  <link rel=icon href=favicon.ico>
+  <title>apipost_vue</title>
+  <script src="./js/jquery.min.js"></script>
+  <script src="./api.js"></script>
+  <script src="./vm.js"></script>
+  <script src="js/mousetrap.min.js"></script>
+  <script src="./js/index.js"></script>
+  <link href=static/js/chunk-081ee19c.cb052c0b.js rel=prefetch>
+  <link href=static/js/chunk-2d865ccf.8cc57538.js rel=prefetch>
+  <link href=static/js/chunk-3b68d2cc.03ed3f08.js rel=prefetch>
+  <link href=static/js/chunk-4d92aff0.37af2563.js rel=prefetch>
+  <link href=static/js/chunk-5c66bed6.d275f4a4.js rel=prefetch>
+  <link href=static/js/chunk-86b7a620.c377d441.js rel=prefetch>
+  <link href=static/js/chunk-987dda5c.5b3276c1.js rel=prefetch>
+  <link href=static/js/chunk-d79c0c74.4c5a3be3.js rel=prefetch>
+  <link href=static/js/app.d4704017.js rel=preload as=script>
+  <link href=static/js/chunk-vendors.9350e641.js rel=preload as=script>
 </head>
-<link rel="stylesheet" href="node_modules/swiper/swiper-bundle.min.css">
-<link rel="stylesheet" href="css/index.css">
-<script src="node_modules/swiper/swiper-bundle.min.js"></script>
 
 <body>
-    <h1>在线HTTP POST/GET接口测试工具</h1>
-    <div class="sidebar">
-        <ul class="catalog">
-        </ul>
-    </div>
+  <link rel="stylesheet/less" type="text/css" href=".//color.less" />
+  <script>
+    window.less = {
+      async: false,
+      env: 'production'
+    };
+  </script>
+  <script type="text/javascript" src="./less.js"></script>
+  <link id=theme rel=stylesheet href=./dark.css> <noscript><strong>We're sorry but apipost_vue doesn't work properly
+    without JavaScript enabled. Please enable it to continue.</strong></noscript>
+  <div id=app></div>
+  <script>
+    let flag = true
 
-    <div class="content">
-        <div class="content_header">
-            <div style="display:flex;margin-top: 23px;height: 3vh;">
-                <!--如果你需要分页-->
-                <!-- <div class="swiper-pagination"></div> -->
-                <!-- 如果需要导航按钮 -->
-                 <div class="swiper-button-prev"></div> 
-                <ul class="nowInterface" id="nowInterface">
-                </ul>
-                <div class="swiper-button-next"></div>
-                <div class="newInterface">+</div>
-            </div>
-
-            <div class="interfaceName"><input type="text"></div>
-            <div>
-                <select name="request" id="requestType" vaule='POST'>
-                    <option value="GET">GET</option>
-                    <option value="POST" selected>POST</option>
-                </select>
-                <input type="text" value="http://47.95.15.38:8000/tree" class="input_url" id='input_url'>
-                <button type="submit" onclick="sendRequest()">发送请求</button>
-                <button type="submit" onclick="saveInterface()">保存</button>
-                <input type="checkbox" onclick="showParams()" id="showParams" checked>请求参数
-                <input type="checkbox" onclick="showSendHeader()" id="showSendHeader" checked>请求Header
-            </div>
-        </div>
-        <script>
-            var mySwiper = new Swiper('.swiper-container', {
-                observer: true, //修改swiper自己或子元素时，自动初始化swiper 
-                observeParents: true, //修改swiper的父元素时，自动初始化swiper 
-                //direction: 'vertical', // 垂直切换选项
-                //loop: true, // 循环模式选项
-                slidesPerView: 3,
-                // 定义slides的数量多少为一组
-                slidesPerGroup: 3,
-                // 分页
-                // pagination: {
-                //     el: '.swiper-pagination',
-                //     // 设为true, 点击分页器的指示点分页器会控制Swiper切换
-                //     clickable: true,
-                // },
-                // 如果需要前进后退按钮
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-            })
-        </script>
-        <style type="text/css">
-            .swiper-container {
-                --swiper-theme-color: #ff6600;
-                /*设置Swiper风格 */
-                --swiper-navigation-color: #FFFFFF;
-                /*单独设置按钮颜色 */
-                --swiper-navigation-size: 12px;
-                /* 设置按钮大小 */
-            }
-        </style>
-        <div class="content_body">
-            <div class="params" id='params'>
-                <ul id='paramsTable'>
-                    <li>参数名称 参数值</li>
-                </ul>
-                <button onclick="addParams()">添加参数</button>
-                <button>批量添加(JSON参数)</button>
-            </div>
-            <div class="sendHeader" id='sendHeader'>
-                <ul id='paramsHeader'>
-                    <li>Header名称 Header值</li>
-                </ul>
-                <button onclick="addHeader()">添加参数</button>
-                <button>Header参数解释？</button>
-            </div>
-            <hr />
-            <ul class='tabList'>
-                <li class="current">
-                    <h6>Header</h6>
-                </li>
-                <li>
-                    <h6>Response Body(返回的是JSON，会自动格式化)</h6>
-                </li>
-                <li>
-                    <h6>成功响应示例及文档</h6>
-                </li>
-            </ul>
-            <div>
-                <div class="header">
-                    <div id="header_editor" class="header_editor current">
-                        请求返回的Header信息。</div>
-                    <div id="response_editor" class="response_editor">
-                        Response Body info</div>
-                    <div style="width: 100%;">
-                        <div class="header_1">
-                            <div>
-                                <h6>响应模板</h6>
-                                <div id="mock_editor" class="mock_editor">
-                                    mock格式数据。</div>
-                            </div>
-                            <div>
-                                <h6>响应数据</h6>
-                                <div id="mockdata_editor" class="mockdata_editor">
-                                    响应数据。</div>
-                            </div>
-                        </div>
-                        <ul id='responseContent'>
-                            <li>
-                                <span>+</span><span>名称</span><span>类型</span><span>生成规则</span><span>初始值</span><span>层级</span>
-                            </li>
-                            <!-- 实际渲染的模板位置 -->
-                            <li>
-                                <ul id="container" class='container'></ul>
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-
-        <script type="text/javascript" src="ace/ace.js"></script>
-        <script src="js/index_sortable.js"></script>
-        <script src="js/load-template.js"></script>
-        <script src="js/ajax.js"></script>
-        <script src="js/mainMethod.js"></script>
-        <script src="js/index.js"></script>
-
-        <!-- 模板生成html代码父模板 -->
-        <script type='text' id="tpl_parent">
-            {{each data item}}
-            <li selfId="{{item.id}}" level="{{item.level}}">
-                {{if item.nextLevel}}
-                <span><button class="out">^</button>
-                    <button class="add">+</button>
-                    <button class="delete">删除</button></span>
-                <span id='nameTd' level="{{item.level}}"><input type="text" value='{{item.name}}' v-model='name'></span>
-                <span> <select id='select'>
-                        {{each $imports.types item1}}
-                        {{if item1.toLowerCase() == item.type.toLowerCase()}}
-                        <option selected>{{item1}}</option>
-                        {{else}}
-                        <option>{{item1}}</option>
-                        {{/if}}
-                        {{/each}}
-                    </select></span>
-                {{if item.rule == 1}}
-                <span><input type="text" value='' v-model='rule'></span>
-                {{else}}
-                <span><input type="text" value='{{item.rule}}' v-model='rule'></span>
-                {{/if}}
-                {{if item.value == '[]'}}
-                {{item.value=""}}
-                {{/if}}
-                <span><input type="text" value='{{item.value}}' v-model='value'></span>
-                <span>{{item.level}}</span>
-                <ul class='container'>
-                    {{@$imports.nextHtml}}
-                </ul>
-                {{else}}
-                <span><button class="out">^</button>
-                    <button class="add">+</button>
-                    <button class="delete">删除</button></span>
-                <span id='nameTd' level="{{item.level}}"><input type="text" value='{{item.name}}' v-model='name'></span>
-                <span> <select id='select'>
-                        {{each $imports.types item1}}
-                        {{if item1.toLowerCase() == item.type.toLowerCase()}}
-                        <option selected>{{item1}}</option>
-                        {{else}}
-                        <option>{{item1}}</option>
-                        {{/if}}
-                        {{/each}}
-                    </select></span>
-                <span><input type="text" value='{{item.rule}}' v-model='rule'></td></span>
-                {{if item.value == '[]'}}
-                {{item.value=""}}
-                {{/if}}
-                <span><input type="text" value='{{item.value}}' v-model='value'></span>
-                <span>{{item.level}}</span>
-                {{/if}}
-            </li>
-            {{/each}}
-        </script>
-        <!-- 模板生成html代码子模板 -->
-        <!-- <script type='text/html' id="tpl">
-                {{if nextlevel}}
-                <li>
-                    <ul id='row' level="{{level}}" dataType="{{type}}">
-                        {{include tpl }}
-                    </ul>
-                </li>
-                {{else}}
-                <li><span><button class="out">^</button>
-                        <button class="add">+</button>
-                        <button class="delete">删除</button></span>
-                    <span id='nameTd' level="{{level}}"><input type="text" value='{{name}}' v-model='name'></span>
-                    <span> <select id='select'>
-                            {{each $imports.types item1}}
-                            {{if item1.toLowerCase() == $value.type.toLowerCase()}}
-                            <option selected>{{item1}}</option>
-                            {{else}}
-                            <option>{{item1}}</option>
-                            {{/if}}
-                            {{/each}}
-                        </select></span>
-                    <span><input type="text" value='{{$value.rule}}' v-model='rule'></td></span>
-                    {{if value == '[]'}}
-                    {{$value.value=""}}
-                    {{/if}}
-                    <span><input type="text" value='{{$value.value}}' v-model='value'></span>
-                    <span>{{$value.level}}</span></li>
-                {{/if}}
-            </script> -->
-        <script src="js/mainMethod.js"></script>
-</body>
-
-</html>
+    function change() {
+      let theme = document.getElementById("theme");
+      if (flag) {
+        theme.href = "./dark.css"
+        flag = false
+      } else {
+        theme.href = "./light.css"
+        flag = true
+      }
+    }
+  </script>
+  <script src=static/js/chunk-vendors.9350e641.js> </script> <script src=static/js/app.d4704017.js> </script> </body>
+    </html>

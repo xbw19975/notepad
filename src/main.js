@@ -1,4 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import {
+  app,
+  BrowserWindow
+} from 'electron';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -17,7 +20,7 @@ const createWindow = () => {
     webSecurity: false,
     webPreferences: {
       webSecurity: false,
-      nativeWindowOpen :false,
+      nativeWindowOpen: false,
       nodeIntegration: true // 注入node模块
     }
   });
@@ -25,8 +28,8 @@ const createWindow = () => {
   // and load the index.html of the app. 为你的应用加载index.html
   mainWindow.loadURL(`file://${__dirname}/index.html`);
   // Open the DevTools. 打开开发者工具
-   mainWindow.webContents.openDevTools();
- 
+  //  mainWindow.webContents.openDevTools();
+
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store windows
@@ -34,6 +37,23 @@ const createWindow = () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  // const c_T = globalShortcut.register('CommandOrControl+T', () => {
+  //   mainWindow.webContents.toggleDevTools();
+  // })
+  // const c_S = globalShortcut.register('ControlOrAlt+S', () => {
+  //   $(".apipost_Send").trigger("click");
+  // })
+  // const a_S = globalShortcut.register('CommandOrControl+S', () => {
+  //   $(".apipost_Save").trigger("click");
+  // })
+
+  // if (!c_T || !c_S || !a_S) {
+  //   console.log('registration failed')
+  // }
+
+  // // 检查快捷键是否注册成功
+  // console.log("~~~~~~~~~~~", globalShortcut.isRegistered('CommandOrControl+T'))
 };
 
 // This method will be called when Electron has finished Electron会在初始化完成并且准备好创建浏览器窗口时调用这个方法
@@ -48,6 +68,8 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+  // 注销所有快捷键
+  // globalShortcut.unregisterAll()
 });
 
 app.on('activate', () => {
@@ -57,6 +79,21 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // 当运行第二个实例时,将会聚焦到mainWindow这个窗口
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+      mainWindow.show()
+    }
+  })
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.

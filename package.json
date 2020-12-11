@@ -1,15 +1,16 @@
 {
-  "name": "notepad",
-  "productName": "notepad",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "name": "apipost",
+  "productName": "apipost",
+  "version": "4.0.0",
+  "description": "apipost for test",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint src --color"
+    "lint": "eslint src --color",
+    "dev": "electron-forge start"
   },
   "keywords": [],
   "author": "86131",
@@ -29,10 +30,11 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "npm"
+        "packageManager": "npm",
+        "icon": "./icon/1024x1024_apt.ico"
       },
       "electronWinstallerConfig": {
-        "name": "notepad"
+        "name": "apipost"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
@@ -42,7 +44,7 @@
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "notepad"
+        "name": "apipost"
       }
     }
   },
@@ -50,7 +52,9 @@
     "electron-compile": "^6.4.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^6.0.0",
-    "localforage": "^1.9.0"
+    "localforage": "^1.9.0",
+    "request": "^2.88.2",
+    "vm2": "^3.9.2"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",
@@ -62,6 +66,8 @@
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.21.1"
+    "eslint-plugin-react": "^7.21.1",
+    "vm2": "^3.9.2",
+    "request": "^2.88.2"
   }
 }
