@@ -104,12 +104,15 @@ function AptInit(apt, globalList, catalogList, envList, headers,testResultList,r
      */
     apt.globals.set = function (_var, _val) {
         if (globalList[_var]) {
+            console.log("有有！！！");
             globalList[_var].value = _val;
         } else {
+            console.log("无无无！！！");
             globalList[_var] = {
-                type: "1",
-                description: "",
-                value: _val
+                type:"1",
+                value:_val,
+                description:"",
+                is_checked:"1"
             }
         }
     }
@@ -151,9 +154,10 @@ function AptInit(apt, globalList, catalogList, envList, headers,testResultList,r
             envList[_var].value = _val;
         } else {
             envList[_var] = {
-                type: 1,
-                value: _val,
-                description: ""
+                type:1,
+                value:_val,
+                description:"",
+                is_checked:"1"
             }
         }
     }

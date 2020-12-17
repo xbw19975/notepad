@@ -64,9 +64,9 @@ function apiAll() {
       //#endregion
 
       var j = request.jar();
-      if (cookies != "") {
-        j.setCookie(cookies, url)
-      }
+      // if (cookies != "") {
+      //   j.setCookie(cookies, url)
+      // }
       //#region 根据contentType在发送请求时如何传参
       var obj = {
         url: url,
